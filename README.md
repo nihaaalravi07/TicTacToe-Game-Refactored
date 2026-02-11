@@ -1,8 +1,25 @@
 # Tic-Tac-Toe-Python
 
+
+<div align="right">
+
+[![CI](https://github.com/SagarBiswas-MultiHAT/TicTacToe-Game/actions/workflows/python-ci.yml/badge.svg)](https://github.com/SagarBiswas-MultiHAT/TicTacToe-Game/actions)
+&nbsp;
+[![Python](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11-blue.svg)](https://www.python.org/)
+&nbsp;
+[![pytest](https://img.shields.io/badge/tests-pytest-brightgreen.svg)](#)
+&nbsp;
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+&nbsp;
+[![Last Commit](https://img.shields.io/github/last-commit/SagarBiswas-MultiHAT/TicTacToe-Game.svg)](https://github.com/SagarBiswas-MultiHAT/TicTacToe-Game/commits)
+
+</div>
+
 Welcome to **Tic-Tac-Toe-Python**, a clean and beginner-friendly command‑line Tic‑Tac‑Toe game written in Python. You play as `O`, the computer plays as `X`, and you can choose how smart the computer should be (easy, mid, or hard).
 
 ---
+
+<br>
 
 <div align="center">
 
@@ -44,7 +61,7 @@ Welcome to **Tic-Tac-Toe-Python**, a clean and beginner-friendly command‑line 
    ```
 3. (Optional) Install as a package:
    ```bash
-   python -m pip install .
+   # Tic-Tac-Toe-Python
    ```
 4. Run the CLI game:
    ```bash
