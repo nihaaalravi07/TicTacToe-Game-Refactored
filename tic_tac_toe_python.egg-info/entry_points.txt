@@ -1,3 +1,0 @@
-[console_scripts]
-tic-tac-toe = cli:main
-tic-tac-toe-gui = gui:main
