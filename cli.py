@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from random import choice
 from typing import Callable
 
@@ -14,6 +15,34 @@ from game import (
     new_board,
     victory_for,
 )
+
+
+@dataclass
+class SeriesScore:
+    human_wins: int = 0
+    computer_wins: int = 0
+    draws: int = 0
+
+    def record(self, winner: str | None) -> None:
+        if winner == PLAYER_SYMBOL:
+            self.human_wins += 1
+        elif winner == COMPUTER_SYMBOL:
+            self.computer_wins += 1
+        else:
+            self.draws += 1
+
+    def display(self) -> None:
+        print("\n=== Final Results ===")
+        print(f"You (O): {self.human_wins}")
+        print(f"Computer (X): {self.computer_wins}")
+        print(f"Draws: {self.draws}\n")
+
+        if self.human_wins > self.computer_wins:
+            print("..:: You win the series! Great job! ::..\n")
+        elif self.computer_wins > self.human_wins:
+            print("..:: Computer wins the series. Try again! ::..\n")
+        else:
+            print("..:: The series is a draw! ::..\n")
 
 
 def display_board(board: Board, printer: Callable[[str], None] = print) -> None:
@@ -154,24 +183,6 @@ def play_match(
         human_turn = not human_turn
 
 
-def _display_series_result(
-    human_wins: int,
-    computer_wins: int,
-    draws: int,
-) -> None:
-    print("\n=== Final Results ===")
-    print(f"You (O): {human_wins}")
-    print(f"Computer (X): {computer_wins}")
-    print(f"Draws: {draws}\n")
-
-    if human_wins > computer_wins:
-        print("..:: You win the series! Great job! ::..\n")
-    elif computer_wins > human_wins:
-        print("..:: Computer wins the series. Try again! ::..\n")
-    else:
-        print("..:: The series is a draw! ::..\n")
-
-
 def run_game(input_fn: Callable[[str], str] = input) -> None:
     print_instructions()
 
@@ -181,21 +192,13 @@ def run_game(input_fn: Callable[[str], str] = input) -> None:
     first_starter_text = "You (O)" if first_starter == PLAYER_SYMBOL else "Computer (X)"
     print("Randomly chosen starter for Match 1: " f"{first_starter_text}\n")
 
-    human_wins = 0
-    computer_wins = 0
-    draws = 0
+    score = SeriesScore()
     current_starter = first_starter
 
     for match in range(1, total_matches + 1):
         print(f"--- Match {match}/{total_matches} ---")
         winner = play_match(difficulty, current_starter, input_fn)
-
-        if winner == PLAYER_SYMBOL:
-            human_wins += 1
-        elif winner == COMPUTER_SYMBOL:
-            computer_wins += 1
-        else:
-            draws += 1
+        score.record(winner)
 
         current_starter = (
             PLAYER_SYMBOL
@@ -203,7 +206,7 @@ def run_game(input_fn: Callable[[str], str] = input) -> None:
             else COMPUTER_SYMBOL
         )
 
-    _display_series_result(human_wins, computer_wins, draws)
+    score.display()
 
 
 def main() -> None:
