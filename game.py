@@ -89,34 +89,27 @@ def _minimax(board: Board, maximizing: bool) -> int:
     return best_score
 
 
-def choose_ai_move(board: Board, level: str) -> Position | None:
-    free_fields = make_list_of_free_fields(board)
-    if not free_fields:
-        return None
+def _choose_easy_move(board: Board, free_fields: list[Position]) -> Position:
+    position = choice(free_fields)
+    apply_move(board, position, COMPUTER_SYMBOL)
+    return position
 
-    normalized = level.strip().lower()
 
-    if normalized == "easy":
-        position = choice(free_fields)
-        apply_move(board, position, COMPUTER_SYMBOL)
-        return position
+def _choose_mid_move(board: Board, free_fields: list[Position]) -> Position:
+    winning_move = _find_winning_move(board, COMPUTER_SYMBOL)
+    if winning_move is not None:
+        apply_move(board, winning_move, COMPUTER_SYMBOL)
+        return winning_move
 
-    if normalized == "mid":
-        winning_move = _find_winning_move(board, COMPUTER_SYMBOL)
-        if winning_move is not None:
-            apply_move(board, winning_move, COMPUTER_SYMBOL)
-            return winning_move
+    blocking_move = _find_winning_move(board, PLAYER_SYMBOL)
+    if blocking_move is not None:
+        apply_move(board, blocking_move, COMPUTER_SYMBOL)
+        return blocking_move
 
-        blocking_move = _find_winning_move(board, PLAYER_SYMBOL)
-        if blocking_move is not None:
-            apply_move(board, blocking_move, COMPUTER_SYMBOL)
-            return blocking_move
+    return _choose_easy_move(board, free_fields)
 
-        position = choice(free_fields)
-        apply_move(board, position, COMPUTER_SYMBOL)
-        return position
 
-    # For hard level prefer an immediate winning move if available (deterministic)
+def _choose_hard_move(board: Board, free_fields: list[Position]) -> Position:
     winning_move = _find_winning_move(board, COMPUTER_SYMBOL)
     if winning_move is not None:
         apply_move(board, winning_move, COMPUTER_SYMBOL)
@@ -124,11 +117,13 @@ def choose_ai_move(board: Board, level: str) -> Position | None:
 
     best_score = -2
     best_moves: list[Position] = []
+
     for position in free_fields:
         row, col = position
         board[row][col] = COMPUTER_SYMBOL
         score = _minimax(board, maximizing=False)
         board[row][col] = EMPTY
+
         if score > best_score:
             best_score = score
             best_moves = [position]
@@ -138,6 +133,23 @@ def choose_ai_move(board: Board, level: str) -> Position | None:
     position = choice(best_moves)
     apply_move(board, position, COMPUTER_SYMBOL)
     return position
+
+
+def choose_ai_move(board: Board, level: str) -> Position | None:
+    free_fields = make_list_of_free_fields(board)
+    if not free_fields:
+        return None
+
+    normalized = level.strip().lower()
+
+    strategies = {
+        "easy": _choose_easy_move,
+        "mid": _choose_mid_move,
+        "hard": _choose_hard_move,
+    }
+
+    strategy = strategies.get(normalized, _choose_hard_move)
+    return strategy(board, free_fields)
 
 
 def is_draw(board: Board) -> bool:
