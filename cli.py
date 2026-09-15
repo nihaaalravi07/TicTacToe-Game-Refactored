@@ -91,6 +91,40 @@ def prompt_total_matches(input_fn: Callable[[str], str]) -> int:
         print("Please enter a number greater than 0.")
 
 
+def _handle_human_turn(
+    board: Board,
+    input_fn: Callable[[str], str],
+) -> str | None:
+    enter_move(board, input_fn)
+
+    if victory_for(board, PLAYER_SYMBOL):
+        display_board(board)
+        print("\n..:: Congratulations! You won this match!\n")
+        return PLAYER_SYMBOL
+
+    return None
+
+
+def _handle_computer_turn(board: Board, difficulty: str) -> str | None:
+    choose_ai_move(board, difficulty)
+
+    if victory_for(board, COMPUTER_SYMBOL):
+        display_board(board)
+        print("\n:( Sorry, I won this match!\n")
+        return COMPUTER_SYMBOL
+
+    return None
+
+
+def _check_for_draw(board: Board) -> bool:
+    if is_draw(board):
+        display_board(board)
+        print("\n:) This match is a draw!\n")
+        return True
+
+    return False
+
+
 def play_match(
     difficulty: str,
     starter: str,
@@ -107,21 +141,14 @@ def play_match(
         display_board(board)
 
         if human_turn:
-            enter_move(board, input_fn)
-            if victory_for(board, PLAYER_SYMBOL):
-                display_board(board)
-                print("\n..:: Congratulations! You won this match!\n")
-                return PLAYER_SYMBOL
+            winner = _handle_human_turn(board, input_fn)
         else:
-            choose_ai_move(board, difficulty)
-            if victory_for(board, COMPUTER_SYMBOL):
-                display_board(board)
-                print("\n:( Sorry, I won this match!\n")
-                return COMPUTER_SYMBOL
+            winner = _handle_computer_turn(board, difficulty)
 
-        if is_draw(board):
-            display_board(board)
-            print("\n:) This match is a draw!\n")
+        if winner is not None:
+            return winner
+
+        if _check_for_draw(board):
             return None
 
         human_turn = not human_turn
