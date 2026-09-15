@@ -154,6 +154,24 @@ def play_match(
         human_turn = not human_turn
 
 
+def _display_series_result(
+    human_wins: int,
+    computer_wins: int,
+    draws: int,
+) -> None:
+    print("\n=== Final Results ===")
+    print(f"You (O): {human_wins}")
+    print(f"Computer (X): {computer_wins}")
+    print(f"Draws: {draws}\n")
+
+    if human_wins > computer_wins:
+        print("..:: You win the series! Great job! ::..\n")
+    elif computer_wins > human_wins:
+        print("..:: Computer wins the series. Try again! ::..\n")
+    else:
+        print("..:: The series is a draw! ::..\n")
+
+
 def run_game(input_fn: Callable[[str], str] = input) -> None:
     print_instructions()
 
@@ -171,6 +189,7 @@ def run_game(input_fn: Callable[[str], str] = input) -> None:
     for match in range(1, total_matches + 1):
         print(f"--- Match {match}/{total_matches} ---")
         winner = play_match(difficulty, current_starter, input_fn)
+
         if winner == PLAYER_SYMBOL:
             human_wins += 1
         elif winner == COMPUTER_SYMBOL:
@@ -178,19 +197,13 @@ def run_game(input_fn: Callable[[str], str] = input) -> None:
         else:
             draws += 1
 
-        current_starter = PLAYER_SYMBOL if current_starter == COMPUTER_SYMBOL else COMPUTER_SYMBOL
+        current_starter = (
+            PLAYER_SYMBOL
+            if current_starter == COMPUTER_SYMBOL
+            else COMPUTER_SYMBOL
+        )
 
-    print("\n=== Final Results ===")
-    print(f"You (O): {human_wins}")
-    print(f"Computer (X): {computer_wins}")
-    print(f"Draws: {draws}\n")
-
-    if human_wins > computer_wins:
-        print("..:: You win the series! Great job! ::..\n")
-    elif computer_wins > human_wins:
-        print("..:: Computer wins the series. Try again! ::..\n")
-    else:
-        print("..:: The series is a draw! ::..\n")
+    _display_series_result(human_wins, computer_wins, draws)
 
 
 def main() -> None:
