@@ -5,28 +5,36 @@ from random import choice
 EMPTY = " "
 PLAYER_SYMBOL = "O"
 COMPUTER_SYMBOL = "X"
+BOARD_SIZE = 3
+MIN_SCORE = -1
+MAX_SCORE = 1
 Board = list[list[str]]
 Position = tuple[int, int]
 
 
 def new_board() -> Board:
-    return [[EMPTY for _ in range(3)] for _ in range(3)]
+    return [[EMPTY for _ in range(BOARD_SIZE)] for _ in range(BOARD_SIZE)]
 
 
 def make_list_of_free_fields(board: Board) -> list[Position]:
-    return [(row, col) for row in range(3) for col in range(3) if board[row][col] == EMPTY]
+    return [
+        (row, col)
+        for row in range(BOARD_SIZE)
+        for col in range(BOARD_SIZE)
+        if board[row][col] == EMPTY
+    ]
 
 
 def victory_for(board: Board, symbol: str) -> bool:
-    for i in range(3):
-        if all(board[i][j] == symbol for j in range(3)):
+    for i in range(BOARD_SIZE):
+        if all(board[i][j] == symbol for j in range(BOARD_SIZE)):
             return True
-        if all(board[j][i] == symbol for j in range(3)):
+        if all(board[j][i] == symbol for j in range(BOARD_SIZE)):
             return True
 
-    if all(board[i][i] == symbol for i in range(3)):
+    if all(board[i][i] == symbol for i in range(BOARD_SIZE)):
         return True
-    if all(board[i][2 - i] == symbol for i in range(3)):
+    if all(board[i][BOARD_SIZE - 1 - i] == symbol for i in range(BOARD_SIZE)):
         return True
 
     return False
@@ -55,9 +63,9 @@ def _find_winning_move(board: Board, symbol: str) -> Position | None:
 
 def _minimax(board: Board, maximizing: bool) -> int:
     if victory_for(board, COMPUTER_SYMBOL):
-        return 1
+        return MAX_SCORE
     if victory_for(board, PLAYER_SYMBOL):
-        return -1
+        return MIN_SCORE
     if is_draw(board):
         return 0
 
